@@ -149,18 +149,17 @@ const WorkersList = () => {
             <h3 style={styles.name}>{worker.name}</h3>
             <p><strong>Skill:</strong> {worker.workSpecification || 'N/A'}</p>
             <p><strong>Location:</strong> {worker.location || 'N/A'}</p>
-            <p style={{ color: worker.available ? '#2e7d32' : '#c62828' }}>
+            <p style={{ color: worker.available ? '#90ee90' : '#f08080' }}>
               {worker.available ? 'Available' : 'Booked'}
             </p>
 
-            {/* 👇 Show Book Now button only for logged-in users with role 'user' */}
             {userRole === 'user' && (
               <button
                 onClick={() => handleBookClick(worker)}
                 disabled={!worker.available}
                 style={{
                   ...styles.bookButton,
-                  backgroundColor: worker.available ? '#1976d2' : '#bbb',
+                  backgroundColor: worker.available ? '#1976d2' : '#555',
                   cursor: worker.available ? 'pointer' : 'not-allowed',
                 }}
               >
@@ -220,65 +219,51 @@ const WorkersList = () => {
   );
 };
 
-// Keep your existing styles object here
-
 const styles = {
-  popupPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    objectFit: 'cover',
-    margin: '0 auto 10px',
-    display: 'block',
-    border: '2px solid #ddd'
-  },
-  popupNoPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    backgroundColor: '#eee',
-    margin: '0 auto 10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 14,
-    color: '#999'
-  },
-  popupTitle: {
-    textAlign: 'center',
-    marginBottom: 15
-  },
-  container: { padding: 20, maxWidth: 1200, margin: '0 auto' },
+  container: {
+  width: '100vw',
+  margin: 0,
+  padding: 0,
+  backgroundColor: '#1c1c1c',
+  color: 'white',
+  minHeight: '100vh',
+  overflowX: 'hidden',
+},
+
   header: { textAlign: 'center', margin: '20px 0' },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: 20
-  },
+ grid: {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+  gap: 20,
+  padding: '0 20px', // optional side padding if needed
+  boxSizing: 'border-box',
+},
+
   card: {
-    border: '1px solid #ddd',
+    border: '1px solid #444',
     borderRadius: 10,
     padding: 15,
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    textAlign: 'center'
+    boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+    textAlign: 'center',
+    backgroundColor: '#2c2c2c',
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: '50%',
     objectFit: 'cover',
-    border: '2px solid #eee'
+    border: '2px solid #fff'
   },
   noPhoto: {
     width: 100,
     height: 100,
     borderRadius: '50%',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#555',
     margin: '0 auto 10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#888'
+    color: '#ddd'
   },
   name: { margin: '10px 0 5px' },
   bookButton: {
@@ -292,26 +277,27 @@ const styles = {
   },
   popupOverlay: {
     position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex',
+    backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex',
     justifyContent: 'center', alignItems: 'center', zIndex: 1000
   },
   popup: {
-    backgroundColor: '#fff',
+    backgroundColor: '#333',
+    color: '#fff',
     borderRadius: 10,
     padding: 20,
     width: '90vw',
     maxWidth: 500,
     position: 'relative',
-    boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
+    boxShadow: '0 5px 15px rgba(0,0,0,0.5)'
   },
   closeBtn: {
     position: 'absolute', top: 10, right: 10,
-    background: 'none', border: 'none', fontSize: 24, cursor: 'pointer'
+    background: 'none', border: 'none', fontSize: 24, color: '#fff', cursor: 'pointer'
   },
   label: { display: 'block', marginBottom: 5, fontWeight: '600' },
   input: {
     width: '100%', padding: 10, marginBottom: 15,
-    borderRadius: 5, border: '1px solid #ddd'
+    borderRadius: 5, border: '1px solid #555', backgroundColor: '#222', color: '#fff'
   },
   actions: { display: 'flex', gap: 10, flexWrap: 'wrap' },
   confirmBtn: {
@@ -325,6 +311,31 @@ const styles = {
   callBtn: {
     flex: 1, padding: '10px', backgroundColor: '#f57f17',
     color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer'
+  },
+  popupPhoto: {
+    width: 100,
+    height: 100,
+    borderRadius: '50%',
+    objectFit: 'cover',
+    margin: '0 auto 10px',
+    display: 'block',
+    border: '2px solid #fff'
+  },
+  popupNoPhoto: {
+    width: 100,
+    height: 100,
+    borderRadius: '50%',
+    backgroundColor: '#555',
+    margin: '0 auto 10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 14,
+    color: '#ddd'
+  },
+  popupTitle: {
+    textAlign: 'center',
+    marginBottom: 15
   },
   mapOverlay: {
     position: 'fixed', top: 0, left: 0,
