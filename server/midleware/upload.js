@@ -1,38 +1,27 @@
+const express = require('express');
+const router = express.Router();
+const { signupUser, loginUser, sendLoginEmail } = require('../controllers/auth');
 const multer = require('multer');
-const path = require('path');
 
-// Storage configuration
+// Multer config
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // common uploads folder
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Ensure this folder exists
   },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
-    );
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
   },
 });
 
-// File filter (optional, restricts to images)
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(
-    path.extname(file.originalname).toLowerCase()
-  );
-  const mimetype = allowedTypes.test(file.mimetype);
+const upload = multer({ storage });
 
-  if (extname && mimetype) {
-    return cb(null, true);
-  } else {
-    cb('Error: Only images are allowed!');
-  }
-};
+router.post('/signup', upload.fields([
+  { name: 'photo', maxCount: 1 },
+  { name: 'qrCode', maxCount: 1 }
+]), signupUser);
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 10000000 }, // 10MB per file
-  fileFilter: fileFilter,
-});
+router.post('/login', loginUser);
+router.post('/send-login-email', sendLoginEmail);
 
-module.exports = upload;
+module.exports = router;

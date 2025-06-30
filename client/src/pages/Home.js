@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Services from '../components/Services';
+import Hero from '../components/herosection'
 import Roles from '../components/Roles';
 import Choose from '../components/Choose';
 import Footer from '../components/Footer';
@@ -42,6 +43,7 @@ const Home = () => {
       {/* Workers List Section (optional) */}
       <Roles /> 
       <Choose/>
+      
       <Footer/> 
     </>
     

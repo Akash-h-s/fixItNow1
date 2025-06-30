@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TrackWorker from './TrackWorker';
+import Hero from '../components/herosection';
 
 const WorkersList = () => {
   const [workers, setWorkers] = useState([]);
@@ -11,7 +12,7 @@ const WorkersList = () => {
   const [showMap, setShowMap] = useState(false);
   const [showBookingPopup, setShowBookingPopup] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [userRole, setUserRole] = useState(null); // 👈 New state to store role
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     try {
@@ -19,7 +20,7 @@ const WorkersList = () => {
       if (storedUser && storedUser !== 'undefined') {
         const loggedInUser = JSON.parse(storedUser);
         setUserId(loggedInUser._id);
-        setUserRole(loggedInUser.role); // 👈 Store the role
+        setUserRole(loggedInUser.role);
       }
     } catch {
       console.error('Invalid user data in localStorage');
@@ -131,6 +132,7 @@ const WorkersList = () => {
 
   return (
     <div style={styles.container}>
+      <Hero />
       <h2 style={styles.header}>Available Workers</h2>
       <div style={styles.grid}>
         {workers.map((worker) => (
@@ -151,8 +153,8 @@ const WorkersList = () => {
               {worker.available ? 'Available' : 'Booked'}
             </p>
 
-            {/* 👇 Hide Book Now if user is a worker */}
-            {userRole !== 'worker' && (
+            {/* 👇 Show Book Now button only for logged-in users with role 'user' */}
+            {userRole === 'user' && (
               <button
                 onClick={() => handleBookClick(worker)}
                 disabled={!worker.available}
@@ -199,12 +201,6 @@ const WorkersList = () => {
               placeholder="Flat/Door #"
               style={styles.input}
             />
-            {/* {distance && arrivalTime && (
-              <div style={styles.etaBox}>
-                <p><strong>Distance:</strong> {distance}</p>
-                <p><strong>ETA:</strong> {arrivalTime}</p>
-              </div>
-            )} */}
             <div style={styles.actions}>
               <button style={styles.confirmBtn} onClick={handleConfirmBooking}>Confirm Booking</button>
               <button style={styles.mapBtn} onClick={() => setShowMap(true)}>View Location</button>
@@ -226,37 +222,35 @@ const WorkersList = () => {
 
 // Keep your existing styles object here
 
-
-// 🔧 Styles below remain unchanged
 const styles = {
   popupPhoto: {
-  width: 100,
-  height: 100,
-  borderRadius: '50%',
-  objectFit: 'cover',
-  margin: '0 auto 10px',
-  display: 'block',
-  border: '2px solid #ddd'
-},
-popupNoPhoto: {
-  width: 100,
-  height: 100,
-  borderRadius: '50%',
-  backgroundColor: '#eee',
-  margin: '0 auto 10px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 14,
-  color: '#999'
-},
-popupTitle: {
-  textAlign: 'center',
-  marginBottom: 15
-}
-,  container: { padding: 20, maxWidth: 1200, margin: '0 auto' },
-  header:    { textAlign: 'center', margin: '20px 0' },
-  grid:      {
+    width: 100,
+    height: 100,
+    borderRadius: '50%',
+    objectFit: 'cover',
+    margin: '0 auto 10px',
+    display: 'block',
+    border: '2px solid #ddd'
+  },
+  popupNoPhoto: {
+    width: 100,
+    height: 100,
+    borderRadius: '50%',
+    backgroundColor: '#eee',
+    margin: '0 auto 10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 14,
+    color: '#999'
+  },
+  popupTitle: {
+    textAlign: 'center',
+    marginBottom: 15
+  },
+  container: { padding: 20, maxWidth: 1200, margin: '0 auto' },
+  header: { textAlign: 'center', margin: '20px 0' },
+  grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
     gap: 20
@@ -318,12 +312,6 @@ popupTitle: {
   input: {
     width: '100%', padding: 10, marginBottom: 15,
     borderRadius: 5, border: '1px solid #ddd'
-  },
-  etaBox: {
-    backgroundColor: '#f8f9fa',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 15
   },
   actions: { display: 'flex', gap: 10, flexWrap: 'wrap' },
   confirmBtn: {
