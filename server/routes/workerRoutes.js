@@ -75,7 +75,7 @@ router.post('/:id/book', async (req, res) => {
       } catch (err) {
         console.error('Error re-enabling worker:', err);
       }
-    }, 5 * 60 * 1000);
+    }, 60 * 1000);
 
     res.status(200).json({ message: 'Worker booked and email sent successfully' });
   } catch (err) {

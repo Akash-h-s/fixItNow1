@@ -13,6 +13,7 @@ const WorkersList = () => {
   const [showBookingPopup, setShowBookingPopup] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     try {
@@ -27,23 +28,24 @@ const WorkersList = () => {
     }
   }, []);
 
+  const fetchWorkers = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/workers');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setWorkers(await res.json());
+    } catch (err) {
+      console.error('Failed to fetch workers:', err);
+    }
+  };
+
   useEffect(() => {
-    const fetchWorkers = async () => {
-      try {
-        const res = await fetch('http://localhost:5000/api/workers');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        setWorkers(await res.json());
-      } catch (err) {
-        console.error('Failed to fetch workers:', err);
-      }
-    };
+    fetchWorkers();
     const fetchUserLocation = () => {
       navigator.geolocation?.getCurrentPosition(
         ({ coords }) => setUserCoords({ lat: coords.latitude, lng: coords.longitude }),
         (err) => console.error('Geolocation error:', err)
       );
     };
-    fetchWorkers();
     fetchUserLocation();
   }, []);
 
@@ -111,6 +113,9 @@ const WorkersList = () => {
 
       alert(data.message);
       setShowBookingPopup(false);
+
+      fetchWorkers();
+
     } catch (err) {
       console.error('Booking error:', err);
       alert(`Booking failed: ${err.message}`);
@@ -130,12 +135,29 @@ const WorkersList = () => {
     setShowMap(false);
   };
 
+  // ✅ Filter workers by searchQuery
+  const filteredWorkers = workers.filter(worker =>
+    worker.workSpecification?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div style={styles.container}>
       <Hero />
       <h2 style={styles.header}>Available Workers</h2>
+
+      {/* ✅ Search bar */}
+      <div style={styles.searchContainer}>
+        <input
+          type="text"
+          placeholder="Search by skill e.g. plumber"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={styles.searchInput}
+        />
+      </div>
+
       <div style={styles.grid}>
-        {workers.map((worker) => (
+        {filteredWorkers.map((worker) => (
           <div key={worker._id} style={styles.card}>
             {worker.photo ? (
               <img
@@ -220,132 +242,30 @@ const WorkersList = () => {
 };
 
 const styles = {
-  container: {
-  width: '100vw',
-  margin: 0,
-  padding: 0,
-  backgroundColor: '#1c1c1c',
-  color: 'white',
-  minHeight: '100vh',
-  overflowX: 'hidden',
-},
-
+  container: { width: '100vw', margin: 0, padding: 0, backgroundColor: '#1c1c1c', color: 'white', minHeight: '100vh', overflowX: 'hidden' },
   header: { textAlign: 'center', margin: '20px 0' },
- grid: {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-  gap: 20,
-  padding: '0 20px', // optional side padding if needed
-  boxSizing: 'border-box',
-},
-
-  card: {
-    border: '1px solid #444',
-    borderRadius: 10,
-    padding: 15,
-    boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
-    textAlign: 'center',
-    backgroundColor: '#2c2c2c',
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    objectFit: 'cover',
-    border: '2px solid #fff'
-  },
-  noPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    backgroundColor: '#555',
-    margin: '0 auto 10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#ddd'
-  },
+  searchContainer: { textAlign: 'center', marginBottom: 20 },
+  searchInput: { padding: 10, width: '80%', maxWidth: 400, borderRadius: 5, border: '1px solid #ccc', fontSize: 16 },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20, padding: '0 20px', boxSizing: 'border-box' },
+  card: { border: '1px solid #444', borderRadius: 10, padding: 15, boxShadow: '0 2px 5px rgba(0,0,0,0.3)', textAlign: 'center', backgroundColor: '#2c2c2c' },
+  avatar: { width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff' },
+  noPhoto: { width: 100, height: 100, borderRadius: '50%', backgroundColor: '#555', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ddd' },
   name: { margin: '10px 0 5px' },
-  bookButton: {
-    marginTop: 10,
-    padding: '10px 20px',
-    fontSize: '1rem',
-    border: 'none',
-    borderRadius: 5,
-    color: '#fff',
-    transition: 'background-color 0.2s'
-  },
-  popupOverlay: {
-    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex',
-    justifyContent: 'center', alignItems: 'center', zIndex: 1000
-  },
-  popup: {
-    backgroundColor: '#333',
-    color: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    width: '90vw',
-    maxWidth: 500,
-    position: 'relative',
-    boxShadow: '0 5px 15px rgba(0,0,0,0.5)'
-  },
-  closeBtn: {
-    position: 'absolute', top: 10, right: 10,
-    background: 'none', border: 'none', fontSize: 24, color: '#fff', cursor: 'pointer'
-  },
+  bookButton: { marginTop: 10, padding: '10px 20px', fontSize: '1rem', border: 'none', borderRadius: 5, color: '#fff', transition: 'background-color 0.2s' },
+  popupOverlay: { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
+  popup: { backgroundColor: '#333', color: '#fff', borderRadius: 10, padding: 20, width: '90vw', maxWidth: 500, position: 'relative', boxShadow: '0 5px 15px rgba(0,0,0,0.5)' },
+  closeBtn: { position: 'absolute', top: 10, right: 10, background: 'none', border: 'none', fontSize: 24, color: '#fff', cursor: 'pointer' },
   label: { display: 'block', marginBottom: 5, fontWeight: '600' },
-  input: {
-    width: '100%', padding: 10, marginBottom: 15,
-    borderRadius: 5, border: '1px solid #555', backgroundColor: '#222', color: '#fff'
-  },
+  input: { width: '100%', padding: 10, marginBottom: 15, borderRadius: 5, border: '1px solid #555', backgroundColor: '#222', color: '#fff' },
   actions: { display: 'flex', gap: 10, flexWrap: 'wrap' },
-  confirmBtn: {
-    flex: 1, padding: '10px', backgroundColor: '#2e7d32',
-    color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer'
-  },
-  mapBtn: {
-    flex: 1, padding: '10px', backgroundColor: '#1976d2',
-    color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer'
-  },
-  callBtn: {
-    flex: 1, padding: '10px', backgroundColor: '#f57f17',
-    color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer'
-  },
-  popupPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    objectFit: 'cover',
-    margin: '0 auto 10px',
-    display: 'block',
-    border: '2px solid #fff'
-  },
-  popupNoPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: '50%',
-    backgroundColor: '#555',
-    margin: '0 auto 10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 14,
-    color: '#ddd'
-  },
-  popupTitle: {
-    textAlign: 'center',
-    marginBottom: 15
-  },
-  mapOverlay: {
-    position: 'fixed', top: 0, left: 0,
-    width: '100%', height: '100%',
-    backgroundColor: '#fff', zIndex: 2000
-  },
-  mapClose: {
-    padding: 10, backgroundColor: '#c62828',
-    color: '#fff', border: 'none', fontSize: 18, cursor: 'pointer'
-  }
+  confirmBtn: { flex: 1, padding: '10px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' },
+  mapBtn: { flex: 1, padding: '10px', backgroundColor: '#1976d2', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' },
+  callBtn: { flex: 1, padding: '10px', backgroundColor: '#f57f17', color: '#fff', border: 'none', borderRadius: 5, cursor: 'pointer' },
+  popupPhoto: { width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', margin: '0 auto 10px', display: 'block', border: '2px solid #fff' },
+  popupNoPhoto: { width: 100, height: 100, borderRadius: '50%', backgroundColor: '#555', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#ddd' },
+  popupTitle: { textAlign: 'center', marginBottom: 15 },
+  mapOverlay: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#fff', zIndex: 2000 },
+  mapClose: { padding: 10, backgroundColor: '#c62828', color: '#fff', border: 'none', fontSize: 18, cursor: 'pointer' }
 };
 
 export default WorkersList;

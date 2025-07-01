@@ -40,7 +40,7 @@ const Footer = () => {
           <div>
             <h3 className="heading">Contact Us</h3>
             <p>Email: support@fixitnow.com</p>
-            <p>Phone: +91 98765 43210</p>
+            <p>Phone: +91 6362434523</p>
             <div className="social">
               <a href="#"><FaFacebookF /></a>
               <a href="#"><FaTwitter /></a>
@@ -50,7 +50,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          &copy; 2025 BlueJobs. All rights reserved.
+          &copy; 2025 🌿FixItNow. All rights reserved.
         </div>
       </footer>
 

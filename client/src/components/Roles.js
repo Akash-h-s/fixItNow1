@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // ✅ import useNavigate
 
 const jobRoles = [
   {
@@ -60,9 +61,9 @@ const jobRoles = [
   },
 ];
 
-
 const TrendingRoles = () => {
   const scrollRef = useRef(null);
+  const navigate = useNavigate(); // ✅ initialize navigate
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -71,7 +72,6 @@ const TrendingRoles = () => {
 
     const animateScroll = () => {
       container.scrollLeft += scrollSpeed;
-      // Loop back
       if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
         container.scrollLeft = 0;
       }
@@ -83,65 +83,60 @@ const TrendingRoles = () => {
   }, []);
 
   const styles = {
-  container: {
-    padding: '2rem 1rem',
-    color: 'white',
-    backgroundColor: '#1c1c1c',
-  },
-  heading: {
-    fontSize: '1.75rem',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: '2rem',
-    color: 'white',
-  },
-  scrollWrapper: {
-    display: 'flex',
-    overflowX: 'auto',
-    gap: '1rem',
-    paddingBottom: '1rem',
-    scrollbarWidth: 'none',
-    msOverflowStyle: 'none',
-  },
-  roleCard: {
-    minWidth: '220px',
-    flexShrink: 0,
-    backgroundColor: '#2f2f2f',  // Light black/dark gray background
-    borderRadius: '12px',
-    padding: '1rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',  // Shadow from Our Services page
-    transition: 'box-shadow 0.3s ease',
-    color: 'white',  // Make all text inside white by default
-  },
-  icon: {
-    width: '40px',
-    height: '40px',
-    marginRight: '0.75rem',
-  },
-  roleDetails: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  icon: {
-  width: '40px',
-  height: '40px',
-  marginRight: '0.75rem',
-  filter: 'brightness(0) invert(1)', // this turns colored PNG into white-ish icon
-},
-
-  title: {
-    fontWeight: 600,
-    fontSize: '1rem',
-    color: 'white',  // Explicit white text
-  },
-  openings: {
-    fontSize: '0.875rem',
-    color: '#ccc',  // Lighter gray text for openings
-  },
-};
+    container: {
+      padding: '2rem 1rem',
+      color: 'white',
+      backgroundColor: '#1c1c1c',
+    },
+    heading: {
+      fontSize: '1.75rem',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: '2rem',
+      color: 'white',
+    },
+    scrollWrapper: {
+      display: 'flex',
+      overflowX: 'auto',
+      gap: '1rem',
+      paddingBottom: '1rem',
+      scrollbarWidth: 'none',
+      msOverflowStyle: 'none',
+    },
+    roleCard: {
+      minWidth: '220px',
+      flexShrink: 0,
+      backgroundColor: '#2f2f2f',
+      borderRadius: '12px',
+      padding: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+      transition: 'box-shadow 0.3s ease',
+      color: 'white',
+      cursor: 'pointer', // ✅ make cursor pointer
+    },
+    icon: {
+      width: '40px',
+      height: '40px',
+      marginRight: '0.75rem',
+      filter: 'brightness(0) invert(1)',
+    },
+    roleDetails: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    title: {
+      fontWeight: 600,
+      fontSize: '1rem',
+      color: 'white',
+    },
+    openings: {
+      fontSize: '0.875rem',
+      color: '#ccc',
+    },
+  };
 
   return (
     <div style={styles.container}>
@@ -151,6 +146,7 @@ const TrendingRoles = () => {
           <div
             key={index}
             style={styles.roleCard}
+            onClick={() => navigate('/signup')} // ✅ navigate to signup page on click
             onMouseEnter={(e) => {
               e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
             }}

@@ -2,15 +2,32 @@ import React, { useState, useEffect } from 'react';
 import workersImage from '../utils/photo1.webp'; // adjust path as per your project
 
 const HeroSection = () => {
+  const facts = [
+    "🔧 Blue-collar workers build our daily world.",
+    "🛠️ They form over 60% of India's workforce.",
+    "🚚 Without them, supply chains stall overnight.",
+    "⚡ Electricians and plumbers keep homes running smoothly.",
+    "🏗️ They are skilled experts, not just labourers.",
+    "🧰 Hiring them empowers families and communities.",
+  ];
+
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
   const [blink, setBlink] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setBlink(prev => !prev);
-    }, 5000); // blink every 10 seconds
+    const factInterval = setInterval(() => {
+      setCurrentFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
+    }, 5000); // change fact every 5 seconds
 
-    return () => clearInterval(interval);
-  }, []);
+    const blinkInterval = setInterval(() => {
+      setBlink(prev => !prev);
+    }, 1000); // blink effect every 1 second
+
+    return () => {
+      clearInterval(factInterval);
+      clearInterval(blinkInterval);
+    };
+  }, [facts.length]);
 
   return (
     <div
@@ -22,8 +39,9 @@ const HeroSection = () => {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start', // shifted to start
-        paddingLeft: '3%', // added left padding to shift content right
+        justifyContent: 'space-between',
+        paddingLeft: '3%',
+        paddingRight: '3%',
         color: 'white',
         fontFamily: 'Arial, sans-serif',
         overflow: 'hidden',
@@ -50,7 +68,8 @@ const HeroSection = () => {
       </div>
 
       {/* LEFT TEXT SECTION */}
-      <div style={{ maxWidth: '650px', zIndex: 10, marginLeft: '3rem' }}>
+      <div style={{ maxWidth: '700px', zIndex: 10 }}>
+        {/* Worker Spotlight */}
         <h1
           style={{
             fontSize: '3rem',
@@ -62,21 +81,21 @@ const HeroSection = () => {
           }}
         >
           <span style={{ color: '#FDE047', fontSize: '3.5rem' }}>✦</span>{' '}
-          WORKER SPOTLIGHT
+          WORKERS SPOTLIGHT
         </h1>
 
+        {/* Interesting Fact */}
         <p
           style={{
             marginTop: '1rem',
-            color: '#aaa',
-            fontSize: '1.5rem',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            display: 'inline-block',
-            animation: 'moveText 10s linear infinite',
+            color: blink ? '#FDE047' : '#aaa',
+            fontSize: '1.3rem',
+            fontWeight: '500',
+            minHeight: '2rem',
+            transition: 'color 0.5s ease-in-out',
           }}
         >
-          Your trusted platform to find and book skilled workers instantly.
+          {facts[currentFactIndex]}
         </p>
 
         <style>
@@ -86,29 +105,36 @@ const HeroSection = () => {
               50% { transform: translateY(0); opacity: 1; }
               100% { transform: translateY(-100%); opacity: 0; }
             }
-
-            @keyframes moveText {
-              0% { transform: translateX(100%); }
-              100% { transform: translateX(-100%); }
-            }
           `}
         </style>
       </div>
 
-      {/* RIGHT IMAGE */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      {/* RIGHT IMAGE + QUOTE BELOW */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <img
           src={workersImage}
           alt="Workers"
           style={{
             maxWidth: '90%',
-            maxHeight: '90vh',
+            maxHeight: '70vh',
             width: 'auto',
             height: 'auto',
             opacity: blink ? 1 : 0.3,
-            transition: 'opacity 1s ease-in-out',
+            transition: 'opacity 0.8s ease-in-out',
           }}
         />
+        <p
+          style={{
+            marginTop: '1rem',
+            fontSize: '1.2rem',
+            fontStyle: 'italic',
+            textAlign: 'center',
+            maxWidth: '80%',
+            color: '#ccc',
+          }}
+        >
+          "No job is too small when done with great skill and dedication."
+        </p>
       </div>
     </div>
   );
