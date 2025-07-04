@@ -37,10 +37,21 @@ const Signup = () => {
     e.preventDefault();
     setMessage('');
 
+    // Email validation: must contain '@gmail.com'
+    if (!formData.email.includes('@gmail.com')) {
+      setMessage('Email must be a valid Gmail address ending with @gmail.com');
+      return;
+    }
+
+    // Password validation: at least 8 characters
+    if (formData.password.length < 8) {
+      setMessage('Password must be at least 8 characters long');
+      return;
+    }
+
     try {
       const form = new FormData();
       Object.entries(formData).forEach(([key, val]) => {
-        // only append photo/qrCode when role=worker
         if ((key === 'photo' || key === 'qrCode') && formData.role !== 'worker') return;
         if (val) form.append(key, val);
       });

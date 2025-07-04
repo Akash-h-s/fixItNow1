@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // for navigation
 import workersImage from '../utils/photo1.webp'; // adjust path as per your project
 
 const HeroSection = () => {
@@ -13,21 +14,43 @@ const HeroSection = () => {
 
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
   const [blink, setBlink] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const factInterval = setInterval(() => {
       setCurrentFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
-    }, 5000); // change fact every 5 seconds
+    }, 5000);
 
     const blinkInterval = setInterval(() => {
       setBlink(prev => !prev);
-    }, 1000); // blink effect every 1 second
+    }, 1000);
 
     return () => {
       clearInterval(factInterval);
       clearInterval(blinkInterval);
     };
   }, [facts.length]);
+
+  const randomContacts = [
+    "Akash - +91 6360434523",
+    "Sita Devi - +91 9123456780",
+    "Helping Hands NGO - +91 9988776655",
+    "Community Help Center - +91 8899776655",
+  ];
+
+  const handleBecomeWorker = () => {
+    navigate('/signup');
+  };
+
+  const handleContactUs = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   return (
     <div
@@ -47,6 +70,53 @@ const HeroSection = () => {
         overflow: 'hidden',
       }}
     >
+      {/* Modal Popup */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              color: 'black',
+              padding: '2rem',
+              borderRadius: '10px',
+              width: '300px',
+              textAlign: 'center',
+            }}
+          >
+            <h3 style={{ marginBottom: '1rem' }}>Helping Committee</h3>
+            <ul style={{ textAlign: 'left' }}>
+              {randomContacts.map((contact, index) => (
+                <li key={index}>{contact}</li>
+              ))}
+            </ul>
+            <button
+              onClick={closeModal}
+              style={{
+                marginTop: '1rem',
+                padding: '0.5rem 1rem',
+                backgroundColor: '#27ae60',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: '5px',
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* TOP CENTER TEXT */}
       <div
         style={{
@@ -69,7 +139,6 @@ const HeroSection = () => {
 
       {/* LEFT TEXT SECTION */}
       <div style={{ maxWidth: '700px', zIndex: 10 }}>
-        {/* Worker Spotlight */}
         <h1
           style={{
             fontSize: '3rem',
@@ -77,14 +146,23 @@ const HeroSection = () => {
             lineHeight: '1.2',
             overflow: 'hidden',
             display: 'inline-block',
-            animation: 'slideFromTop 5s ease-in-out infinite',
           }}
         >
           <span style={{ color: '#FDE047', fontSize: '3.5rem' }}>✦</span>{' '}
           WORKERS SPOTLIGHT
         </h1>
 
-        {/* Interesting Fact */}
+        <p
+          style={{
+            marginTop: '0.5rem',
+            fontSize: '1.1rem',
+            color: '#ddd',
+            maxWidth: '600px',
+          }}
+        >
+          Celebrating the hands that build, repair, and sustain our communities every day.
+        </p>
+
         <p
           style={{
             marginTop: '1rem',
@@ -97,6 +175,49 @@ const HeroSection = () => {
         >
           {facts[currentFactIndex]}
         </p>
+
+        <p
+          style={{
+            marginTop: '1rem',
+            fontSize: '1rem',
+            color: '#bbb',
+            maxWidth: '600px',
+          }}
+        >
+          Our platform bridges the gap between skilled workers and those who need their expertise, ensuring fair opportunities and reliable services.
+        </p>
+
+        {/* Action Buttons */}
+        <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+          <button
+            onClick={handleContactUs}
+            style={{
+              padding: '0.8rem 1.2rem',
+              backgroundColor: '#27ae60',
+              border: 'none',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              borderRadius: '5px',
+            }}
+          >
+            Contact Us
+          </button>
+          <button
+            onClick={handleBecomeWorker}
+            style={{
+              padding: '0.8rem 1.2rem',
+              backgroundColor: '#2980b9',
+              border: 'none',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              borderRadius: '5px',
+            }}
+          >
+            Become a Worker
+          </button>
+        </div>
 
         <style>
           {`
